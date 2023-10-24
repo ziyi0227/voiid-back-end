@@ -39,4 +39,13 @@ public class UserController {
         return Result.fail(20002,"用户名或密码错误");
     }
 
+    @GetMapping("/info")
+    public Result<Map<String,Object>> getUserInfo(@RequestParam("token") String token){
+        Map<String,Object> data = userService.getUserInfo(token);
+        if(data != null){
+            return Result.success(data,"获取用户信息成功");
+        }
+        return Result.fail(20003,"登录过期，请重新登录");
+    }
+
 }

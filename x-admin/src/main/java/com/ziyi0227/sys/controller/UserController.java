@@ -78,4 +78,10 @@ public class UserController {
         return Result.success(data,"查询成功");
     }
 
+    @PostMapping
+    public Result<?> addUser(@RequestBody User user){
+        userService.save(user);
+        return Result.success("添加用户成功");
+    }
+
 }

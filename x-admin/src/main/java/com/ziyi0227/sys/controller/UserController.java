@@ -6,6 +6,7 @@ import com.ziyi0227.common.vo.Result;
 import com.ziyi0227.sys.entity.User;
 import com.ziyi0227.sys.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,9 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/all")
     public Result<List<User>> getAllUser(){
@@ -67,6 +71,7 @@ public class UserController {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(StringUtils.hasLength(username),User::getUsername,username);
         wrapper.eq(StringUtils.hasLength(phone),User::getPhone,phone);
+        wrapper.orderByDesc(User::getId);
 
         Page<User> page = new Page<>(pageNo,pageSize);
         userService.page(page,wrapper);
@@ -80,6 +85,7 @@ public class UserController {
 
     @PostMapping
     public Result<?> addUser(@RequestBody User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.save(user);
         return Result.success("添加用户成功");
     }

@@ -90,4 +90,25 @@ public class UserController {
         return Result.success("添加用户成功");
     }
 
+    @PutMapping
+    public Result<?> updateUser(@RequestBody User user){
+        // 能否修改密码
+        user.setPassword(null);
+        // user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.updateById(user);
+        return Result.success("修改用户成功");
+    }
+
+    @GetMapping("/{id}")
+    public Result<User> getUserById(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        return Result.success(user,"查询成功");
+    }
+
+    @DeleteMapping("/{id}")
+    public Result<User> deleteUserById(@PathVariable("id") Integer id){
+        userService.removeById(id);
+        return Result.success("删除用户成功");
+    }
+
 }

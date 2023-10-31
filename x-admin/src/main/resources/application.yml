@@ -14,4 +14,10 @@ logging:
   level:
     com.ziyi0227: debug
 
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 

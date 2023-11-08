@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ziyi0227.common.vo.Result;
 import com.ziyi0227.sys.entity.User;
 import com.ziyi0227.sys.service.IUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -23,6 +25,8 @@ import java.util.Map;
  * @author ziyi0227
  * @since 2023-10-15
  */
+
+@Api(tags = {"用户接口列表"})
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -32,12 +36,14 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @ApiOperation("用户信息查询")
     @GetMapping("/all")
     public Result<List<User>> getAllUser(){
         List<User> list = userService.list();
         return Result.success(list,"查询成功");
     }
 
+    @ApiOperation("用户登录")
     @PostMapping("/login")
     public Result<Map<String,Object>> login(@RequestBody User user){
         Map<String,Object> data = userService.login(user);

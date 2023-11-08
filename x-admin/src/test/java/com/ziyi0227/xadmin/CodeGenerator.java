@@ -15,12 +15,12 @@ public class CodeGenerator {
         String password = "root";
         String moduleName = "sys";
         String mapperLocation = "D:\\code\\learning\\java\\vue-springboot\\x-admin\\src\\main\\resources\\mapper\\"+moduleName;
-        String tables = "x_user,x_role,x_menu,x_role_menu,x_user_role";
+        String tables = "x_menu,x_role_menu";
         FastAutoGenerator.create(url, username, password)
                 .globalConfig(builder -> {
                     builder.author("ziyi0227") // 设置作者
                             // .enableSwagger() // 开启 swagger 模式
-                            // .fileOverride() // 覆盖已生成文件
+                            .fileOverride() // 覆盖已生成文件
                             .outputDir("D:\\code\\learning\\java\\vue-springboot\\x-admin\\src\\main\\java"); // 指定输出目录
                 })
                 .dataSourceConfig(builder -> builder.typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {

@@ -1,20 +1,29 @@
 package com.ziyi0227.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author ziyi0227
  * @since 2023-10-15
  */
+@Data
 @TableName("x_role_menu")
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoleMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private Integer id;
 
     private Integer roleId;
 

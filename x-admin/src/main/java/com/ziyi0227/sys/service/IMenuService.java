@@ -2,6 +2,9 @@ package com.ziyi0227.sys.service;
 
 import com.ziyi0227.sys.entity.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMenuService extends IService<Menu> {
 
+    List<Menu> getAllMenu();
 }

@@ -49,25 +49,25 @@ public class RoleController {
 
     @PostMapping
     public Result<?> addRole(@RequestBody Role role){
-        roleService.save(role);
+        roleService.addRole(role);
         return Result.success("新增角色成功");
     }
 
     @PutMapping
     public Result<?> updateRole(@RequestBody Role role){
-        roleService.updateById(role);
+        roleService.updateRole(role);
         return Result.success("修改角色成功");
     }
 
     @GetMapping("/{id}")
     public Result<Role> getRoleById(@PathVariable("id") Integer id){
-        Role role = roleService.getById(id);
+        Role role = roleService.getRoleById(id);
         return Result.success(role);
     }
 
     @DeleteMapping("/{id}")
     public Result<Role> deleteRoleById(@PathVariable("id") Integer id){
-        roleService.removeById(id);
+        roleService.deleteRoleById(id);
         return Result.success("删除角色成功");
     }
 

@@ -1,49 +1,54 @@
 package com.ziyi0227.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author ziyi0227
  * @since 2023-10-15
  */
 @TableName("x_menu")
+@Data
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    @TableId(value = "menu_id", type = IdType.AUTO)
+    private Integer menuId;
+    private String component;
+    private String path;
+    private String redirect;
+    private String name;
+    private String title;
+    private String icon;
+    private Integer parentId;
+    private String isLeaf;
+    private Boolean hidden;
 
-    private String menuName;
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<Menu> children;
 
-    public Integer getId() {
-        return id;
+    @TableField(exist = false)
+    private Map<String,Object> meta;
+    public Map<String,Object> getMeta(){
+        meta = new HashMap<>();
+        meta.put("title",title);
+        meta.put("icon",icon);
+        return meta;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getMenuName() {
-        return menuName;
-    }
-
-    public void setMenuName(String menuName) {
-        this.menuName = menuName;
-    }
-
-    @Override
-    public String toString() {
-        return "Menu{" +
-            "id = " + id +
-            ", menuName = " + menuName +
-        "}";
-    }
 }

@@ -44,4 +44,23 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             }
         }
     }
+
+    @Override
+    public List<Menu> getMenuListByUserId(Integer userId) {
+        // 一级菜单
+        List<Menu> menuList = this.baseMapper.getMenuListByUserId(userId, 0);
+        //子菜单
+        setMenuChildrenByUserId(userId, menuList);
+        return menuList;
+    }
+
+    private void setMenuChildrenByUserId(Integer userId, List<Menu> menuList) {
+        if(menuList != null){
+            for (Menu menu : menuList) {
+                List<Menu> subMenuList = this.baseMapper.getMenuListByUserId(userId, menu.getMenuId());
+                menu.setChildren(subMenuList);
+                setMenuChildrenByUserId(userId,subMenuList);
+            }
+        }
+    }
 }

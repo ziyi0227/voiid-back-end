@@ -17,4 +17,6 @@ import java.util.List;
 public interface IMenuService extends IService<Menu> {
 
     List<Menu> getAllMenu();
+
+    List<Menu> getMenuListByUserId(Integer userId);
 }

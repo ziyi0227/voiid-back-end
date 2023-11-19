@@ -4,10 +4,12 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ziyi0227.common.utils.JwtUtil;
 import com.ziyi0227.common.vo.Result;
+import com.ziyi0227.sys.entity.Menu;
 import com.ziyi0227.sys.entity.User;
 import com.ziyi0227.sys.entity.UserRole;
 import com.ziyi0227.sys.mapper.UserMapper;
 import com.ziyi0227.sys.mapper.UserRoleMapper;
+import com.ziyi0227.sys.service.IMenuService;
 import com.ziyi0227.sys.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private IMenuService menuService;
 
     @Override
     public Map<String, Object> login(User user) {
@@ -117,6 +122,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             //返回用户角色
             List<String> roleList = this.baseMapper.getRoleNameByUserId(loginUser.getId());
             data.put("roles",roleList);
+
+            // 权限列表
+            List<Menu> menuList = menuService.getMenuListByUserId(loginUser.getId());
+            data.put("menuList",menuList);
 
             return data;
         }

@@ -92,7 +92,7 @@ public class UserController {
     @PostMapping
     public Result<?> addUser(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.save(user);
+        userService.addUser(user);
         return Result.success("添加用户成功");
     }
 
@@ -107,7 +107,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Result<User> getUserById(@PathVariable("id") Integer id){
-        User user = userService.getById(id);
+        User user = userService.getUserById(id);
         return Result.success(user,"查询成功");
     }
 

@@ -1,19 +1,25 @@
 package com.ziyi0227.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author ziyi0227
  * @since 2023-10-15
  */
 @TableName("x_user")
+@Data
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,6 +40,9 @@ public class User implements Serializable {
     private String avatar;
 
     private Integer deleted;
+
+    @TableField(exist = false)
+    private List<Integer> roleIdList;
 
     public Integer getId() {
         return id;

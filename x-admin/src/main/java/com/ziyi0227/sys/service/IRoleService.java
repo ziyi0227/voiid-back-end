@@ -3,6 +3,8 @@ package com.ziyi0227.sys.service;
 import com.ziyi0227.sys.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -20,4 +22,6 @@ public interface IRoleService extends IService<Role> {
     void updateRole(Role role);
 
     void deleteRoleById(Integer id);
+
+    List<Role> getAllRole();
 }

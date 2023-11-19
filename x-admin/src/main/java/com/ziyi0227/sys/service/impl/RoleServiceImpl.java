@@ -73,4 +73,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         wrapper.eq(RoleMenu::getRoleId,id);
         roleMenuMapper.delete(wrapper);
     }
+
+    @Override
+    public List<Role> getAllRole() {
+        return this.baseMapper.selectList(null);
+    }
 }

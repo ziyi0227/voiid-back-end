@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,6 +70,12 @@ public class RoleController {
     public Result<Role> deleteRoleById(@PathVariable("id") Integer id){
         roleService.deleteRoleById(id);
         return Result.success("删除角色成功");
+    }
+
+    @GetMapping("/all")
+    public Result<List<Role>> getAllRole(){
+        List<Role> roleList = roleService.getAllRole();
+        return Result.success(roleList);
     }
 
 }

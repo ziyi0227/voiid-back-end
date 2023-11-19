@@ -101,7 +101,7 @@ public class UserController {
         // 能否修改密码
         user.setPassword(null);
         // user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.updateById(user);
+        userService.updateUser(user);
         return Result.success("修改用户成功");
     }
 
@@ -113,7 +113,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public Result<User> deleteUserById(@PathVariable("id") Integer id){
-        userService.removeById(id);
+        userService.deleteUserById(id);
         return Result.success("删除用户成功");
     }
 

@@ -154,4 +154,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         return user;
     }
+
+    @Override
+    @Transactional
+    public void updateUser(User user) {
+        this.baseMapper.updateById(user);
+
+        LambdaQueryWrapper<UserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserRole::getUserId,user.getId());
+        userRoleMapper.delete(wrapper);
+
+        List<Integer> roleIdList = user.getRoleIdList();
+        if(roleIdList != null){
+            for (Integer roleId : roleIdList) {
+                userRoleMapper.insert(new UserRole(user.getId(),roleId,null));
+            }
+        }
+    }
+
+    @Override
+    public void deleteUserById(Integer id) {
+        this.baseMapper.deleteById(id);
+        LambdaQueryWrapper<UserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserRole::getUserId,id);
+        userRoleMapper.delete(wrapper);
+    }
 }

@@ -1,9 +1,12 @@
 package com.ziyi0227.sys.service.impl;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONException;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ziyi0227.common.utils.JwtUtil;
-import com.ziyi0227.common.vo.Result;
 import com.ziyi0227.sys.entity.Menu;
 import com.ziyi0227.sys.entity.User;
 import com.ziyi0227.sys.entity.UserRole;
@@ -11,19 +14,27 @@ import com.ziyi0227.sys.mapper.UserMapper;
 import com.ziyi0227.sys.mapper.UserRoleMapper;
 import com.ziyi0227.sys.service.IMenuService;
 import com.ziyi0227.sys.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RestTemplateBuilder builder;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -188,4 +202,82 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         wrapper.eq(UserRole::getUserId,id);
         userRoleMapper.delete(wrapper);
     }
+
+    @Override
+    public Map<String, Object> loginByVoice(MultipartFile audioFile) {
+        // 打印文件名和大小
+        System.out.println("File name: " + audioFile.getOriginalFilename());
+        System.out.println("File size: " + audioFile.getSize());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body
+                = new LinkedMultiValueMap<>();
+        try {
+            File file = convertMultiPartToFile(audioFile);
+            body.add("audio", new FileSystemResource(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 打印请求体内容
+        System.out.println("Request body: " + body);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity
+                = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate
+                .exchange("http://localhost:5000/predict", HttpMethod.POST, requestEntity, String.class);
+
+        // // 删除临时文件
+        // if (file != null && file.exists()) {
+        //     file.delete();
+        // }
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                // 解析JSON响应
+                JSONObject jsonResponse = JSONObject.parseObject(response.getBody());
+                // 获取most_id作为username进行查询
+                String username = jsonResponse.getString("most_similar_id");
+                String similarity = jsonResponse.getString("similarity");
+                // 根据用户名查询用户信息
+                LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(User::getUsername, username);
+                User loginUser = this.baseMapper.selectOne(wrapper);
+
+                if (loginUser != null){
+                    //存入redis
+                    loginUser.setPassword(null);
+                    // redisTemplate.opsForValue().set(key,loginUser,30, TimeUnit.MINUTES);
+
+                    //创建jwt
+                    String token = jwtUtil.createToken(loginUser);
+
+                    //返回token
+                    Map<String,Object> data = new HashMap<>();
+                    data.put("similarity",similarity);
+                    data.put("token",token);
+                    return data;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                // 返回错误信息或抛出异常
+            }
+        }
+        // 处理请求失败的情况，可以返回错误信息或抛出异常
+        return null;
+    }
+
+    private File convertMultiPartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
+        file.transferTo(convFile); // Transfer the MultipartFile to the File
+        return convFile;
+    }
 }
+
+
+

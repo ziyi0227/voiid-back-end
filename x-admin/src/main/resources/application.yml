@@ -10,6 +10,11 @@ spring:
     port: 6379
     host: localhost
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
 logging:
   level:
     com.ziyi0227: debug

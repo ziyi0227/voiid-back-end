@@ -2,6 +2,7 @@ package com.ziyi0227.sys.service;
 
 import com.ziyi0227.sys.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -28,4 +29,6 @@ public interface IUserService extends IService<User> {
     void updateUser(User user);
 
     void deleteUserById(Integer id);
+
+    Map<String, Object> loginByVoice(MultipartFile audioFile);
 }

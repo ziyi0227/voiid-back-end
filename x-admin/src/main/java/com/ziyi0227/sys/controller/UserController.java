@@ -8,10 +8,12 @@ import com.ziyi0227.sys.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +49,21 @@ public class UserController {
     @PostMapping("/login")
     public Result<Map<String,Object>> login(@RequestBody User user){
         Map<String,Object> data = userService.login(user);
+        if(data != null){
+            return Result.success(data,"登录成功");
+        }
+        return Result.fail(20002,"用户名或密码错误");
+    }
+
+    @ApiOperation("用户声纹登录")
+    @PostMapping("/voiidlog")
+    public Result<Map<String,Object>> loginByVoice(@RequestParam("audio") MultipartFile audio){
+        // 输出文件信息
+        System.out.println("Received audio file:");
+        System.out.println("File name: " + audio.getOriginalFilename());
+        System.out.println("File size: " + audio.getSize());
+
+        Map<String,Object> data = userService.loginByVoice(audio);
         if(data != null){
             return Result.success(data,"登录成功");
         }
